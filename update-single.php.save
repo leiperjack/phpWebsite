@@ -1,0 +1,48 @@
+<?php include "connect.php" ?>
+
+<?php
+if (isset($_POST["Text2"])) {
+
+$sql = "UPDATE nationMap SET club_id=".$_POST["Text2"]." WHERE player_id=".$_GET["id"];
+
+if (mysqli_query($dbconnect, $sql)) {
+    echo "Record updated successfully";
+} else {
+    echo "Error updating record: " . mysqli_error($conn);
+}
+
+mysqli_close($dbconnect);
+
+} else {
+
+$sqlget = "SELECT firstName, lastName, clubName FROM players, club, nationMap WHERE nationMap.club_id=club.club_id AND players.player_id=nationMap.player_id AND nationMap.player_id=".$_GET["id"];
+$sqldata= mysqli_query($dbconnect, $sqlget);
+
+while ($row = mysqli_fetch_array($sqldata)){
+	echo "Choose team for ";
+	echo $row["firstName"];
+	echo " ";
+	echo $row["lastName"];
+	echo " to transfer to: ";
+
+	//echo print_r($row);
+
+}
+<form method="post" action="transfer2.php">
+<select name = "clubName">
+
+<?php 
+$selectOption = $_POST['clubName'];
+$sqlget = "SELECT clubName, club_id FROM club, nationMap WHERE ";
+$sqldata = mysqli_query($dbconnect, $sqlget) or die('Error: in query "'.$sqlget.'"');
+while ($row = mysqli_fetch_array($sqldata, MYSQLI_ASSOC)) {
+echo "<option value='".$row['clubName']."'>".$row['clubName'] . "</option>";
+}
+
+
+?>
+</select>
+<input type="submit" value="Submit the form"/>
+</form>
+
+} ?> 
